@@ -1,3 +1,3 @@
-from wardrobe.webapp import create_app
+from wardrobe.entrypoints.flask_app import create_app
 
 app = create_app()
