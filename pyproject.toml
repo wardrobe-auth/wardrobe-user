@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "wardrobe-user"
+name = "wardrobe"
 version = "0.1.0"
 description = ""
 authors = ["Pyunghyuk Yoo <yoophi@gmail.com>"]
