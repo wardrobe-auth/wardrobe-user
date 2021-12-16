@@ -3,6 +3,7 @@ name = "wardrobe"
 version = "0.1.0"
 description = ""
 authors = ["Pyunghyuk Yoo <yoophi@gmail.com>"]
+packages = [{ include = "wardrobe" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
