@@ -6,7 +6,13 @@ from wardrobe.use_cases import UseCase
 
 
 class RegisterUserUseCase(UseCase):
-    def __init__(self, user_repository: IUserRepository, user_settings, email_service, password_service=None):
+    def __init__(
+        self,
+        user_repository: IUserRepository,
+        user_settings,
+        email_service,
+        password_service=None,
+    ):
         self.user_repository: IUserRepository = user_repository
         self.user_config: UserConfig = user_settings
         self.email_service = email_service
