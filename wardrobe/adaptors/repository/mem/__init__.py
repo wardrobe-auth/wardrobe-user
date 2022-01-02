@@ -1,4 +1,5 @@
 from wardrobe.adaptors.repository import AbstractUserRepository, UserInput
+from wardrobe.domain.user import UserEntity
 
 
 class MemUserRepository(AbstractUserRepository):
@@ -6,4 +7,7 @@ class MemUserRepository(AbstractUserRepository):
         pass
 
     def get(self, id_):
-        pass
+        return UserEntity.factory(42, "user@example.com", "John")
+
+    def get_by_email(self, email):
+        return UserEntity.factory(42, "user@example.com", "John")

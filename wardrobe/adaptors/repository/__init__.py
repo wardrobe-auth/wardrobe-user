@@ -48,3 +48,7 @@ class AbstractUserRepository(abc.ABC):
     @abc.abstractmethod
     def get(self, id_):
         pass
+
+    @abc.abstractmethod
+    def get_by_email(self, email):
+        pass
