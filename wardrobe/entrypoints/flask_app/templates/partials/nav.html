@@ -1,0 +1,32 @@
+<pre>{{ current_user }}</pre>
+<ul>
+    {% if current_user.is_authenticated %}
+        <li>
+            <span>{{ current_user.id }} {{ current_user.email }}</span>
+            <a href="{{ url_for('user.logout') }}">로그아웃</a>
+        </li>
+        <li>
+            <a href="{{ url_for('user.profile') }}">프로필</a>
+        </li>
+        <li>
+            <a href="{{ url_for('user.update_user_profile') }}">프로필 수정</a>
+        </li>
+        <li>
+            <a href="{{ url_for('user.change_user_password') }}">비밀번호 변경</a>
+        </li>
+    {% else %}
+        <li>
+            <a href="{{ url_for('user.login') }}">로그인</a>
+        </li>
+        <li>
+            <a href="{{ url_for('user.register') }}">회원 가입</a>
+        </li>
+        <li>
+            <a href="{{ url_for('user.find_user_email') }}">이메일 찾기</a>
+        </li>
+        <li>
+            <a href="{{ url_for('user.reset_user_password') }}">비밀번호 초기화</a>
+        </li>
+    {% endif %}
+</ul>
+

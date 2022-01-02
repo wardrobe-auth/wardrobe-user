@@ -10,8 +10,17 @@ def bootstrap(uow: AbstractUnitOfWork, logger: Optional[Callable] = None):
     if logger is None:
         logger = logging.getLogger(__name__)
 
-    dependencies = {"logger": logger}
-    injected_event_handlers = {}
+    dependencies = {
+        "logger": logger,
+        "uow": uow,
+    }
+    injected_event_handlers = {
+        event_type: [
+            inject_dependencies(event_handler, dependencies)
+            for event_handler in event_handlers
+        ]
+        for event_type, event_handlers in handlers.EVENT_HANDLERS.items()
+    }
     injected_command_handlers = {
         command_type: inject_dependencies(command_handler, dependencies)
         for command_type, command_handler in handlers.COMMAND_HANDLERS.items()
