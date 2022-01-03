@@ -44,8 +44,6 @@ class MemUnitOfWork(AbstractUnitOfWork):
         super().__init__(users)
 
     def __enter__(self):
-        self.users = MemUserRepository()
-
         return super().__enter__()
 
     def __exit__(self, *args):

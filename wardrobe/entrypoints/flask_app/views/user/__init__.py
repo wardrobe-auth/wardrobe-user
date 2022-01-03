@@ -2,15 +2,100 @@ from flask import Flask, current_app, request, redirect, render_template
 from flask_login import login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 
 from wardrobe.domain import commands
 from wardrobe.entrypoints.flask_app import message_bus
 from wardrobe.entrypoints.flask_app.utils import get_safe_next_url, make_safe_url
 
 
+class StripedStringField(StringField):
+    def _value(self):
+        return super()._value().strip()
+
+    def process_data(self, value):
+        try:
+            value = value.strip()
+        except:
+            pass
+
+        self.data = value
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = valuelist[0].strip()
+
+
+class EqualTo(object):  # --> Change to 'LessThan'
+    """
+    Compares the values of two fields.
+
+    :param fieldname:
+        The name of the other field to compare to.
+    :param message:
+        Error message to raise in case of a validation error. Can be
+        interpolated with `%(other_label)s` and `%(other_name)s` to provide a
+        more helpful error.
+    """
+
+    def __init__(self, fieldname, message=None):
+        self.fieldname = fieldname
+        self.message = message
+
+    def __call__(self, form, field):
+        try:
+            other = form[self.fieldname]
+        except KeyError:
+            raise ValidationError(
+                field.gettext("Invalid field name '%s'.") % self.fieldname
+            )
+        if field.data != other.data:  # --> Change to >= from !=
+            d = {
+                "other_label": hasattr(other, "label")
+                and other.label.text
+                or self.fieldname,
+                "other_name": self.fieldname,
+            }
+            message = self.message
+            if message is None:
+                message = field.gettext("Field must be equal to %(other_name)s.")
+
+            raise ValidationError(message % d)
+
+
+class LoginForm(FlaskForm):
+    username = StripedStringField("username", validators=[DataRequired()])
+    password = PasswordField("password", validators=[DataRequired()])
+
+
+class RegisterForm(FlaskForm):
+    username = StripedStringField("username", validators=[DataRequired()])
+    name = StripedStringField("name", validators=[DataRequired()])
+    password = PasswordField("password", validators=[DataRequired()])
+    password_confirm = PasswordField(
+        "password_confirm", validators=[DataRequired(), EqualTo("password")]
+    )
+
+
 def register_view():
-    return "Not Implemented"
+    form = RegisterForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            username = form.username.data
+            name = form.name.data
+            password = form.password.data
+            cmd = commands.RegisterUser.factory(username, name, password)
+            resp = message_bus.bus.handle(cmd)
+            if not resp:
+                return resp.message
+
+            login_user(resp.value)
+            return redirect("/")
+
+    return render_template(
+        "users/register.html",
+        form=form,
+    )
 
 
 def login_view():
@@ -24,10 +109,6 @@ def login_view():
     error = ""
     username = ""
 
-    class LoginForm(FlaskForm):
-        username = StringField("username", validators=[DataRequired()])
-        password = PasswordField("password", validators=[DataRequired()])
-
     form = LoginForm()
 
     if request.method == "POST" and form.validate_on_submit():
@@ -36,7 +117,6 @@ def login_view():
         password = request.form.get("password")
 
         cmd = commands.UserLogin(username=username, password=password)
-
         resp = message_bus.bus.handle(cmd)
         if not resp:
             error = resp.message
