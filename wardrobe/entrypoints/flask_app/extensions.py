@@ -9,7 +9,6 @@ login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
-    print(f"user_id={user_id}")
     return views.get_user(user_id, message_bus.bus.uow)
 
 

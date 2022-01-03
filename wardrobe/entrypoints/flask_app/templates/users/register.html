@@ -1,0 +1,16 @@
+{% extends "layouts/with_navigation.html" %}
+
+{% block contents %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>{{ form.username.label }} {{ form.username(size=20) }}</div>
+        <div>{{ form.name.label }} {{ form.name(size=20) }}</div>
+        <div>{{ form.password.label }} {{ form.password(size=20) }}</div>
+        <div>{{ form.password_confirm.label }} {{ form.password_confirm(size=20) }}</div>
+        <input type="submit" value="Register">
+    </form>
+    <pre>{{ form.username.data }}</pre>
+    <pre>{{ form.name.data }}</pre>
+    <pre>{{ form.password.data }}</pre>
+    <pre>{{ form.password_confirm.data }}</pre>
+{% endblock %}

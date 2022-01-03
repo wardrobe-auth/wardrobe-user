@@ -13,6 +13,7 @@ class InvalidInput:
 @dataclass
 class UserInput:
     email: str
+    name: str
     password: str
 
     def __nonzero__(self):
@@ -24,17 +25,18 @@ class UserInput:
     def factory(
         cls,
         email=None,
+        name=None,
         password=None,
         validator: Callable = lambda **_kwargs: True,
         raise_exception=False,
     ):
-        if not validator(email=email, password=password):
+        if not validator(email=email, name=name, password=password):
             if raise_exception:
                 raise ValueError
             else:
                 return InvalidInput("error-message")
 
-        return cls(email=email, password=password)
+        return cls(email=email, name=name, password=password)
 
 
 class AbstractUserRepository(abc.ABC):

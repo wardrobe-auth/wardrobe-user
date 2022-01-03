@@ -34,3 +34,17 @@ class UserLogin(Command):
 
     def is_valid(self):
         return bool(self.username and self.password)
+
+
+@dataclass
+class RegisterUser(Command):
+    username: str
+    name: str
+    password: str
+
+    @classmethod
+    def factory(cls, username, name, password):
+        return cls(username=username, name=name, password=password)
+
+    def is_valid(self):
+        return bool(self.username and self.password)
